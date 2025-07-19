@@ -1,0 +1,15 @@
+server:
+  port: 8000
+
+logging:
+  level:
+    root: INFO
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+spring:
+  application:
+    name: job-scheduler
