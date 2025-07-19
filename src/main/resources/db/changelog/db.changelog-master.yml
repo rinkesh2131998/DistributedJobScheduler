@@ -36,3 +36,9 @@ databaseChangeLog:
       author: rinkesh
       sqlFile:
         path: db/changelog/sql/V5__update_job_table.sql
+
+  - changeSet:
+      id: 6
+      author: rinkesh
+      sqlFile:
+        path: db/changelog/sql/V6__update_job_contraints.sql
