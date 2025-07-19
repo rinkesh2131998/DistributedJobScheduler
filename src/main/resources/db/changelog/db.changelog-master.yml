@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: rinkesh
+      sqlFile:
+        path: db/changelog/sql/V1__init_schema.sql
+        splitStatements: true
+        stripComments: true
+
+  - changeSet:
+      id: 2
+      author: rinkesh
+      sqlFile:
+        path: db/changelog/sql/V2__create_enums.sql
+        splitStatements: false
+        stripComments: true
+
+  - changeSet:
+      id: 3
+      author: rinkesh
+      sqlFile:
+        path: db/changelog/sql/V3__create_job_table.sql
+        splitStatements: true
+        stripComments: true
+
+  - changeSet:
+      id: 4
+      author: rinkesh
+      sqlFile:
+        path: db/changelog/sql/V4__update_trigger.sql
+        splitStatements: false
+        stripComments: true
