@@ -68,7 +68,6 @@ public class JobManagementImpl implements JobManagement {
 
         existingJob.setName(jobUpdateRequest.name());
         existingJob.setType(jobUpdateRequest.jobType());
-        existingJob.setJobStatus(JobStatus.SCHEDULED);
         existingJob.setCronExpression(jobUpdateRequest.cronExpression());
         existingJob.setScheduledTime(jobUpdateRequest.scheduledTime());
         existingJob.setPayload(jobUpdateRequest.payload());
