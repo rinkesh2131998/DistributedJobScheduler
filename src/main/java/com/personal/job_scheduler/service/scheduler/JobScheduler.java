@@ -1,8 +1,9 @@
-package com.personal.job_scheduler.service;
+package com.personal.job_scheduler.service.scheduler;
 
 import com.personal.job_scheduler.models.entity.Job;
 import com.personal.job_scheduler.models.entity.JobStatus;
 import com.personal.job_scheduler.repository.JobRepository;
+import com.personal.job_scheduler.service.executor.JobExecutor;
 import com.personal.job_scheduler.util.CronUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

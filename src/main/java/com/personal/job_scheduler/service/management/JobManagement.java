@@ -1,4 +1,4 @@
-package com.personal.job_scheduler.service;
+package com.personal.job_scheduler.service.management;
 
 import com.personal.job_scheduler.models.dto.JobCreateRequest;
 import com.personal.job_scheduler.models.dto.JobResponse;

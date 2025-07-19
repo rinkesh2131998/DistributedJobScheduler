@@ -1,4 +1,4 @@
-package com.personal.job_scheduler.service;
+package com.personal.job_scheduler.service.executor;
 
 import org.springframework.stereotype.Service;
 
