@@ -1,4 +1,4 @@
-package com.personal.job_scheduler;
+package com.personal.job_scheduler.repository;
 
 import com.personal.job_scheduler.models.entity.Job;
 import com.personal.job_scheduler.models.entity.JobStatus;

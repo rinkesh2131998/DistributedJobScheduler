@@ -1,6 +1,5 @@
 package com.personal.job_scheduler.service;
 
-import com.personal.job_scheduler.JobRepository;
 import com.personal.job_scheduler.exception.ResourceNotFoundException;
 import com.personal.job_scheduler.models.dto.JobCreateRequest;
 import com.personal.job_scheduler.models.dto.JobResponse;
@@ -8,8 +7,10 @@ import com.personal.job_scheduler.models.dto.JobUpdateRequest;
 import com.personal.job_scheduler.models.entity.Job;
 import com.personal.job_scheduler.models.entity.JobStatus;
 import com.personal.job_scheduler.models.entity.JobType;
+import com.personal.job_scheduler.repository.JobRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -35,6 +36,7 @@ public class JobManagementImpl implements JobManagement {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<JobResponse> getAllJobsByType(final JobType jobType) {
         return jobRepository.findByType(jobType)
                 .stream()
@@ -51,6 +53,7 @@ public class JobManagementImpl implements JobManagement {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public JobResponse getJobDetails(final UUID jobId) {
         return jobRepository.findById(jobId)
                 .map(this::toDto)

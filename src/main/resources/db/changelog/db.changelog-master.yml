@@ -42,3 +42,9 @@ databaseChangeLog:
       author: rinkesh
       sqlFile:
         path: db/changelog/sql/V6__update_job_contraints.sql
+
+  - changeSet:
+      id: 7
+      author: rinkesh
+      sqlFile:
+        path: db/changelog/sql/V7__change_column_types.sql
