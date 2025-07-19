@@ -36,9 +36,8 @@ public class JobScheduler {
             if (shouldSubmitJob(job)) {
                 job.setPickedAt(LocalDateTime.now());
                 job.setJobStatus(JobStatus.RUNNING);
-//                jobRepository.save(job);
-//                jobExecutor.submit();
-                // todo: add job submittion to executor
+                jobRepository.save(job);
+                jobExecutor.submit(job);
             }
         }
         log.debug("Scheduler finished {} job(s).", jobsToCheck.size());

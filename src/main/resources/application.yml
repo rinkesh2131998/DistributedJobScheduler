@@ -4,6 +4,8 @@ server:
 job:
   scheduler:
     fixed-delay: 5000 # 5 seconds
+  executor:
+    pool-size: 10
 
 logging:
   level:

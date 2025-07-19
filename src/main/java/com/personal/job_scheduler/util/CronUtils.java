@@ -12,7 +12,7 @@ import java.util.Date;
 public class CronUtils {
 
     public static boolean isDue(final String cron, final LocalDateTime dateToCompareAgainst) {
-        if (cron != null || cron.isBlank()) {
+        if (cron == null || cron.isBlank()) {
             return false;
         }
         try {
