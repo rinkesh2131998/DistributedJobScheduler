@@ -22,4 +22,6 @@ public interface JobManagement {
 
     JobResponse deleteJob(UUID jobId);
 
+    JobResponse runManualJob(UUID jobId);
+
 }

@@ -62,4 +62,10 @@ public class JobManagementController {
         JobResponse jobResponse = jobManagement.deleteJob(jobId);
         return ResponseEntity.ok(jobResponse);
     }
+
+    @GetMapping("/{jobId}/run")
+    public ResponseEntity<JobResponse> runManualJob(@PathVariable UUID jobId) {
+        JobResponse jobResponse = jobManagement.runManualJob(jobId);
+        return ResponseEntity.ok(jobResponse);
+    }
 }

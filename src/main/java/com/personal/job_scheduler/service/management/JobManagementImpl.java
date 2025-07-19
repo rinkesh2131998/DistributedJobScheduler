@@ -8,10 +8,12 @@ import com.personal.job_scheduler.models.entity.Job;
 import com.personal.job_scheduler.models.entity.JobStatus;
 import com.personal.job_scheduler.models.entity.JobType;
 import com.personal.job_scheduler.repository.JobRepository;
+import com.personal.job_scheduler.service.executor.JobExecutor;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,6 +22,7 @@ import java.util.UUID;
 public class JobManagementImpl implements JobManagement {
 
     private final JobRepository jobRepository;
+    private final JobExecutor jobExecutor;
 
     @Override
     public JobResponse createJob(final JobCreateRequest jobCreateRequest) {
@@ -84,6 +87,23 @@ public class JobManagementImpl implements JobManagement {
                 .orElseThrow(() -> new ResourceNotFoundException("Job not found with id: " + jobId));
         jobRepository.delete(existingJob);
         return toDto(existingJob);
+    }
+
+    @Override
+    public JobResponse runManualJob(UUID jobId) {
+        final Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new ResourceNotFoundException("Job not found with id: " + jobId));
+        if (job.getType() != JobType.MANUAL) {
+            throw new IllegalArgumentException("Job with id: " + jobId + " is not a manual job");
+        }
+        if (job.getJobStatus() == JobStatus.RUNNING) {
+            throw new IllegalStateException("Job with id: " + jobId + " is in RUNNING state");
+        }
+        job.setJobStatus(JobStatus.RUNNING);
+        job.setPickedAt(LocalDateTime.now());
+        final Job updatedJob = jobRepository.save(job);
+        jobExecutor.submit(updatedJob);
+        return toDto(updatedJob);
     }
 
     //convert Job entity to JobResponse DTO
