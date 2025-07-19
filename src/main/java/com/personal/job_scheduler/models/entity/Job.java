@@ -39,6 +39,10 @@ public class Job {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private JobStatus jobStatus;
+    @Column
+    private String cronExpression; // Cron jobs
+    @Column
+    private LocalDateTime scheduledTime; // one time jobs
     @Lob
     private String payload;
     @Lob

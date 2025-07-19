@@ -30,3 +30,9 @@ databaseChangeLog:
         path: db/changelog/sql/V4__update_trigger.sql
         splitStatements: false
         stripComments: true
+
+  - changeSet:
+      id: 5
+      author: rinkesh
+      sqlFile:
+        path: db/changelog/sql/V5__update_job_table.sql
