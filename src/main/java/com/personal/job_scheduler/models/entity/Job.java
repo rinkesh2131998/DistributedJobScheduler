@@ -51,4 +51,6 @@ public class Job {
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+    @Column
+    private LocalDateTime pickedAt;
 }

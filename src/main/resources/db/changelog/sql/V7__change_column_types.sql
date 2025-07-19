@@ -1,3 +1,4 @@
 ALTER TABLE scheduler.job
     ALTER COLUMN job_status TYPE VARCHAR,
-    ALTER COLUMN type TYPE VARCHAR;
+    ALTER COLUMN type TYPE VARCHAR,
+    ADD COLUMN picked_at TIMESTAMP;

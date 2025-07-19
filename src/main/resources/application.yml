@@ -1,6 +1,10 @@
 server:
   port: 8000
 
+job:
+  scheduler:
+    fixed-delay: 5000 # 5 seconds
+
 logging:
   level:
     root: INFO
