@@ -30,9 +30,7 @@ public class JobExecutor {
                 //todo: simulate a job for now, not actually running the payload
                 Thread.sleep(1000);
                 handleJob(job);
-                job.setJobStatus(JobStatus.SUCCESS);
-                job.setResult("Job Completed");
-                log.info("Executed Job with Id: {}", job.getId());
+                jobRepository.save(job);
             } catch (final Exception e) {
                 job.setJobStatus(JobStatus.FAILED);
                 job.setResult("Error: " + e.getMessage());

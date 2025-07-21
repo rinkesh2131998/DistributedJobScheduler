@@ -11,7 +11,7 @@ databaseChangeLog:
       id: 2
       author: rinkesh
       sqlFile:
-        path: db/changelog/sql/V2__create_enums.sql
+        path: db/changelog/sql/V2__create_job_table.sql
         splitStatements: false
         stripComments: true
 
@@ -19,15 +19,15 @@ databaseChangeLog:
       id: 3
       author: rinkesh
       sqlFile:
-        path: db/changelog/sql/V3__create_job_table.sql
-        splitStatements: true
+        path: db/changelog/sql/V3__update_trigger.sql
+        splitStatements: false
         stripComments: true
 
   - changeSet:
       id: 4
       author: rinkesh
       sqlFile:
-        path: db/changelog/sql/V4__update_trigger.sql
+        path: db/changelog/sql/V4__update_job_table.sql
         splitStatements: false
         stripComments: true
 
@@ -35,16 +35,10 @@ databaseChangeLog:
       id: 5
       author: rinkesh
       sqlFile:
-        path: db/changelog/sql/V5__update_job_table.sql
+        path: db/changelog/sql/V5__update_job_contraints.sql
 
   - changeSet:
       id: 6
       author: rinkesh
       sqlFile:
-        path: db/changelog/sql/V6__update_job_contraints.sql
-
-  - changeSet:
-      id: 7
-      author: rinkesh
-      sqlFile:
-        path: db/changelog/sql/V7__change_column_types.sql
+        path: db/changelog/sql/V6__change_column_types.sql

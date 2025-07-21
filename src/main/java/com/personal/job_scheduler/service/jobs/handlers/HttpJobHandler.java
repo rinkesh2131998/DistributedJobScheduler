@@ -2,8 +2,16 @@ package com.personal.job_scheduler.service.jobs.handlers;
 
 import com.personal.job_scheduler.models.entity.Job;
 import com.personal.job_scheduler.models.entity.enums.JobActionType;
+import com.personal.job_scheduler.models.entity.enums.JobStatus;
 import com.personal.job_scheduler.service.jobs.JobHandler;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+@Slf4j
 public class HttpJobHandler implements JobHandler {
     @Override
     public boolean canHandle(Job job) {
@@ -12,6 +20,26 @@ public class HttpJobHandler implements JobHandler {
 
     @Override
     public void execute(Job job) {
+        try {
+            URL url = new URL(job.getPayload());
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
 
+            int status = con.getResponseCode();
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            StringBuilder content = new StringBuilder();
+            String line;
+            while ((line = in.readLine()) != null) {
+                content.append(line);
+            }
+
+            in.close();
+            con.disconnect();
+
+            job.setJobStatus(JobStatus.SUCCESS);
+            job.setResult("HTTP " + status + ": " + content);
+        } catch (Exception e) {
+            throw new RuntimeException("HTTP job failed: " + e.getMessage(), e);
+        }
     }
 }

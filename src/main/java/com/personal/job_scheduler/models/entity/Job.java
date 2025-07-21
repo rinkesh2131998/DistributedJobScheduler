@@ -43,6 +43,7 @@ public class Job {
     @Column(nullable = false)
     private JobStatus jobStatus;
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private JobActionType jobActionType;
     @Column
     private String cronExpression; // Cron jobs
