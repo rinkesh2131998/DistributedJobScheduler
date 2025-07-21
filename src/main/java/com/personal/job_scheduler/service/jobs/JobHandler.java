@@ -1,4 +1,4 @@
-package com.personal.job_scheduler.service.handler;
+package com.personal.job_scheduler.service.jobs;
 
 import com.personal.job_scheduler.models.entity.Job;
 
