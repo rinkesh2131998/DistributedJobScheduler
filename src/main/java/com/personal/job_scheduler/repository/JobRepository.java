@@ -1,7 +1,7 @@
 package com.personal.job_scheduler.repository;
 
 import com.personal.job_scheduler.models.entity.Job;
-import com.personal.job_scheduler.models.entity.JobType;
+import com.personal.job_scheduler.models.entity.enums.JobType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

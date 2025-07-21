@@ -1,5 +1,8 @@
 package com.personal.job_scheduler.models.entity;
 
+import com.personal.job_scheduler.models.entity.enums.JobActionType;
+import com.personal.job_scheduler.models.entity.enums.JobStatus;
+import com.personal.job_scheduler.models.entity.enums.JobType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -39,6 +42,8 @@ public class Job {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private JobStatus jobStatus;
+    @Column(nullable = false)
+    private JobActionType jobActionType;
     @Column
     private String cronExpression; // Cron jobs
     @Column

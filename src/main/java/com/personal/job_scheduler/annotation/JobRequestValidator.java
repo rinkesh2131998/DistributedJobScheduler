@@ -2,7 +2,7 @@ package com.personal.job_scheduler.annotation;
 
 import com.personal.job_scheduler.models.dto.JobCreateRequest;
 import com.personal.job_scheduler.models.dto.JobUpdateRequest;
-import com.personal.job_scheduler.models.entity.JobType;
+import com.personal.job_scheduler.models.entity.enums.JobType;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

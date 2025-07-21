@@ -5,8 +5,8 @@ import com.personal.job_scheduler.models.dto.JobCreateRequest;
 import com.personal.job_scheduler.models.dto.JobResponse;
 import com.personal.job_scheduler.models.dto.JobUpdateRequest;
 import com.personal.job_scheduler.models.entity.Job;
-import com.personal.job_scheduler.models.entity.JobStatus;
-import com.personal.job_scheduler.models.entity.JobType;
+import com.personal.job_scheduler.models.entity.enums.JobStatus;
+import com.personal.job_scheduler.models.entity.enums.JobType;
 import com.personal.job_scheduler.repository.JobRepository;
 import com.personal.job_scheduler.service.executor.JobExecutor;
 import lombok.AllArgsConstructor;
@@ -33,6 +33,7 @@ public class JobManagementImpl implements JobManagement {
                 .cronExpression(jobCreateRequest.cronExpression())
                 .scheduledTime(jobCreateRequest.scheduledTime())
                 .payload(jobCreateRequest.payload())
+                .jobActionType(jobCreateRequest.jobActionType())
                 .build();
         final Job jobResponse = jobRepository.save(job);
         return toDto(jobResponse);
@@ -76,6 +77,7 @@ public class JobManagementImpl implements JobManagement {
         existingJob.setType(jobUpdateRequest.jobType());
         existingJob.setCronExpression(jobUpdateRequest.cronExpression());
         existingJob.setScheduledTime(jobUpdateRequest.scheduledTime());
+        existingJob.setJobActionType(jobUpdateRequest.jobActionType());
         existingJob.setPayload(jobUpdateRequest.payload());
         final Job updatedJob = jobRepository.save(existingJob);
         return toDto(updatedJob);

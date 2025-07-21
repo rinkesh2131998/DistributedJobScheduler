@@ -3,7 +3,7 @@ package com.personal.job_scheduler.controller;
 import com.personal.job_scheduler.models.dto.JobCreateRequest;
 import com.personal.job_scheduler.models.dto.JobResponse;
 import com.personal.job_scheduler.models.dto.JobUpdateRequest;
-import com.personal.job_scheduler.models.entity.JobType;
+import com.personal.job_scheduler.models.entity.enums.JobType;
 import com.personal.job_scheduler.service.management.JobManagement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

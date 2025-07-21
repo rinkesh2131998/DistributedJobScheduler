@@ -1,7 +1,7 @@
 package com.personal.job_scheduler.service.executor;
 
 import com.personal.job_scheduler.models.entity.Job;
-import com.personal.job_scheduler.models.entity.JobStatus;
+import com.personal.job_scheduler.models.entity.enums.JobStatus;
 import com.personal.job_scheduler.repository.JobRepository;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
