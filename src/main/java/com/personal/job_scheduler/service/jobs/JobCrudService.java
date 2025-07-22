@@ -1,4 +1,5 @@
-package com.personal.job_scheduler.service.management;
+package com.personal.job_scheduler.service.jobs;
+
 
 import com.personal.job_scheduler.models.dto.JobCreateRequest;
 import com.personal.job_scheduler.models.dto.JobResponse;
@@ -8,8 +9,7 @@ import com.personal.job_scheduler.models.entity.enums.JobType;
 import java.util.List;
 import java.util.UUID;
 
-public interface JobManagement {
-
+public interface JobCrudService {
     JobResponse createJob(JobCreateRequest jobCreateRequest);
 
     List<JobResponse> getAllJobsByType(JobType jobType);
@@ -21,7 +21,4 @@ public interface JobManagement {
     JobResponse updateJob(JobUpdateRequest jobUpdateRequest);
 
     JobResponse deleteJob(UUID jobId);
-
-    JobResponse runManualJob(UUID jobId);
-
 }

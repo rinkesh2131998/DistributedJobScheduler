@@ -6,7 +6,8 @@ import com.personal.job_scheduler.models.dto.JobRunHistoryResponse;
 import com.personal.job_scheduler.models.dto.JobUpdateRequest;
 import com.personal.job_scheduler.models.entity.enums.JobType;
 import com.personal.job_scheduler.service.history.JobRunHistoryService;
-import com.personal.job_scheduler.service.management.JobManagement;
+import com.personal.job_scheduler.service.jobs.JobCrudService;
+import com.personal.job_scheduler.service.jobs.JobManagement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,47 +33,54 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class JobController {
     private final JobManagement jobManagement;
+    private final JobCrudService jobCrudService;
     private final JobRunHistoryService jobRunHistoryService;
 
     @PostMapping
     public ResponseEntity<JobResponse> createJob(@RequestBody @Valid JobCreateRequest jobCreateRequest) {
-        JobResponse jobResponse = jobManagement.createJob(jobCreateRequest);
+        JobResponse jobResponse = jobCrudService.createJob(jobCreateRequest);
         return ResponseEntity.status(201).body(jobResponse);
     }
 
     @GetMapping
     public ResponseEntity<List<JobResponse>> getAllJobs() {
-        List<JobResponse> jobResponses = jobManagement.getAllJobs();
+        List<JobResponse> jobResponses = jobCrudService.getAllJobs();
         return ResponseEntity.ok(jobResponses);
     }
 
     @GetMapping("type")
     public ResponseEntity<List<JobResponse>> getAllJobsByType(@RequestParam JobType jobType) {
-        List<JobResponse> jobResponses = jobManagement.getAllJobsByType(jobType);
+        List<JobResponse> jobResponses = jobCrudService.getAllJobsByType(jobType);
         return ResponseEntity.ok(jobResponses);
     }
 
     @GetMapping("/{jobId}")
     public ResponseEntity<JobResponse> getJobDetails(@PathVariable UUID jobId) {
-        JobResponse jobResponse = jobManagement.getJobDetails(jobId);
+        JobResponse jobResponse = jobCrudService.getJobDetails(jobId);
         return ResponseEntity.ok(jobResponse);
     }
 
     @PutMapping
     public ResponseEntity<JobResponse> updateJob(@RequestBody @Valid JobUpdateRequest jobUpdateRequest) {
-        JobResponse jobResponse = jobManagement.updateJob(jobUpdateRequest);
+        JobResponse jobResponse = jobCrudService.updateJob(jobUpdateRequest);
         return ResponseEntity.ok(jobResponse);
     }
 
     @DeleteMapping("/{jobId}")
     public ResponseEntity<JobResponse> deleteJob(@PathVariable UUID jobId) {
-        JobResponse jobResponse = jobManagement.deleteJob(jobId);
+        JobResponse jobResponse = jobCrudService.deleteJob(jobId);
         return ResponseEntity.ok(jobResponse);
     }
 
-    @GetMapping("/{jobId}/run")
+    @PostMapping("/{jobId}/run")
     public ResponseEntity<JobResponse> runManualJob(@PathVariable UUID jobId) {
         JobResponse jobResponse = jobManagement.runManualJob(jobId);
+        return ResponseEntity.ok(jobResponse);
+    }
+
+    @PostMapping("/{jobId}/reset")
+    public ResponseEntity<JobResponse> resetRetryForFailedJobs(@PathVariable UUID jobId, @RequestParam(required = false, defaultValue = "false") boolean runNow) {
+        final JobResponse jobResponse = jobManagement.resetJobRetry(jobId, runNow);
         return ResponseEntity.ok(jobResponse);
     }
 

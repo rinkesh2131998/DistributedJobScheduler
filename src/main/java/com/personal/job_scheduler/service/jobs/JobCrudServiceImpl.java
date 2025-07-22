@@ -1,4 +1,4 @@
-package com.personal.job_scheduler.service.management;
+package com.personal.job_scheduler.service.jobs;
 
 import com.personal.job_scheduler.exception.ResourceNotFoundException;
 import com.personal.job_scheduler.models.dto.JobCreateRequest;
@@ -8,24 +8,21 @@ import com.personal.job_scheduler.models.entity.Job;
 import com.personal.job_scheduler.models.entity.enums.JobStatus;
 import com.personal.job_scheduler.models.entity.enums.JobType;
 import com.personal.job_scheduler.repository.JobRepository;
-import com.personal.job_scheduler.service.executor.JobExecutor;
-import lombok.AllArgsConstructor;
+import com.personal.job_scheduler.util.CommonUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
-public class JobManagementImpl implements JobManagement {
-
+@RequiredArgsConstructor
+public class JobCrudServiceImpl implements JobCrudService {
     private static final int DEFAULT_MAX_RETRIES = 3;
     private static final long DEFAULT_DELAY_RETRY_MILLIS = 1000;
 
     private final JobRepository jobRepository;
-    private final JobExecutor jobExecutor;
 
     @Override
     public JobResponse createJob(final JobCreateRequest jobCreateRequest) {
@@ -45,7 +42,7 @@ public class JobManagementImpl implements JobManagement {
                 .retryDelayMillis(retryDelayMillis)
                 .build();
         final Job jobResponse = jobRepository.save(job);
-        return toDto(jobResponse);
+        return CommonUtils.mapJobToResponseDto(jobResponse);
     }
 
     @Override
@@ -53,7 +50,7 @@ public class JobManagementImpl implements JobManagement {
     public List<JobResponse> getAllJobsByType(final JobType jobType) {
         return jobRepository.findByType(jobType)
                 .stream()
-                .map(this::toDto)
+                .map(CommonUtils::mapJobToResponseDto)
                 .toList();
     }
 
@@ -61,7 +58,7 @@ public class JobManagementImpl implements JobManagement {
     public List<JobResponse> getAllJobs() {
         return jobRepository.findAll()
                 .stream()
-                .map(this::toDto)
+                .map(CommonUtils::mapJobToResponseDto)
                 .toList();
     }
 
@@ -69,7 +66,7 @@ public class JobManagementImpl implements JobManagement {
     @Transactional(readOnly = true)
     public JobResponse getJobDetails(final UUID jobId) {
         return jobRepository.findById(jobId)
-                .map(this::toDto)
+                .map(CommonUtils::mapJobToResponseDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Job not found with id: " + jobId));
     }
 
@@ -91,7 +88,7 @@ public class JobManagementImpl implements JobManagement {
         existingJob.setMaxRetries(jobUpdateRequest.maxRetries());
         existingJob.setRetryDelayMillis(jobUpdateRequest.retryDelayMillis());
         final Job updatedJob = jobRepository.save(existingJob);
-        return toDto(updatedJob);
+        return CommonUtils.mapJobToResponseDto(updatedJob);
     }
 
     @Override
@@ -99,42 +96,6 @@ public class JobManagementImpl implements JobManagement {
         final Job existingJob = jobRepository.findById(jobId)
                 .orElseThrow(() -> new ResourceNotFoundException("Job not found with id: " + jobId));
         jobRepository.delete(existingJob);
-        return toDto(existingJob);
-    }
-
-    @Override
-    public JobResponse runManualJob(UUID jobId) {
-        final Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new ResourceNotFoundException("Job not found with id: " + jobId));
-        if (job.getType() != JobType.MANUAL) {
-            throw new IllegalArgumentException("Job with id: " + jobId + " is not a manual job");
-        }
-        if (job.getJobStatus() == JobStatus.RUNNING) {
-            throw new IllegalStateException("Job with id: " + jobId + " is in RUNNING state");
-        }
-        job.setJobStatus(JobStatus.RUNNING);
-        job.setPickedAt(LocalDateTime.now());
-        final Job updatedJob = jobRepository.save(job);
-        jobExecutor.submit(updatedJob);
-        return toDto(updatedJob);
-    }
-
-    //convert Job entity to JobResponse DTO
-    JobResponse toDto(final Job job) {
-        return JobResponse.builder()
-                .id(job.getId())
-                .name(job.getName())
-                .jobType(job.getType())
-                .jobStatus(job.getJobStatus())
-                .cronExpression(job.getCronExpression())
-                .scheduledTime(job.getScheduledTime())
-                .payload(job.getPayload())
-                .createdAt(job.getCreatedAt())
-                .updatedAt(job.getUpdatedAt())
-                .retryCount(job.getRetryCount())
-                .maxRetries(job.getMaxRetries())
-                .retryDelayMillis(job.getRetryDelayMillis())
-                .lastRetryAt(job.getLastRetryAt())
-                .build();
+        return CommonUtils.mapJobToResponseDto(existingJob);
     }
 }
