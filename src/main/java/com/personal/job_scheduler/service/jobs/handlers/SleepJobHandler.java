@@ -14,6 +14,9 @@ public class SleepJobHandler implements JobHandler {
     @Override
     public void execute(Job job, JobRunHistory jobRunHistory) {
         try {
+            if ("FAIL_THIS_JOB".equals(job.getPayload())) {
+                throw new IllegalStateException("Forced failure for retry test");
+            }
             long millis = Long.parseLong(job.getPayload());
             Thread.sleep(millis);
             jobRunHistory.setResult("Slept for " + millis + " ms");

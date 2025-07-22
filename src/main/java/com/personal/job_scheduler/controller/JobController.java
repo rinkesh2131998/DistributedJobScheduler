@@ -2,11 +2,17 @@ package com.personal.job_scheduler.controller;
 
 import com.personal.job_scheduler.models.dto.JobCreateRequest;
 import com.personal.job_scheduler.models.dto.JobResponse;
+import com.personal.job_scheduler.models.dto.JobRunHistoryResponse;
 import com.personal.job_scheduler.models.dto.JobUpdateRequest;
 import com.personal.job_scheduler.models.entity.enums.JobType;
+import com.personal.job_scheduler.service.history.JobRunHistoryService;
 import com.personal.job_scheduler.service.management.JobManagement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,8 +30,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/jobs")
 @RequiredArgsConstructor
-public class JobManagementController {
+public class JobController {
     private final JobManagement jobManagement;
+    private final JobRunHistoryService jobRunHistoryService;
 
     @PostMapping
     public ResponseEntity<JobResponse> createJob(@RequestBody @Valid JobCreateRequest jobCreateRequest) {
@@ -67,5 +74,22 @@ public class JobManagementController {
     public ResponseEntity<JobResponse> runManualJob(@PathVariable UUID jobId) {
         JobResponse jobResponse = jobManagement.runManualJob(jobId);
         return ResponseEntity.ok(jobResponse);
+    }
+
+    @GetMapping("/{jobId}/history")
+    public ResponseEntity<Page<JobRunHistoryResponse>> getRunHistoryByJobId(@PathVariable UUID jobId,
+                                                                            @RequestParam(required = false, defaultValue = "0") Integer page,
+                                                                            @RequestParam(required = false, defaultValue = "10") Integer size,
+                                                                            @RequestParam(defaultValue = "startedAt") String sortBy,
+                                                                            @RequestParam(defaultValue = "desc") String sortDir) {
+        final Sort sortDirection = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        final Pageable pageable = PageRequest.of(page, size, sortDirection);
+        return ResponseEntity.ok(jobRunHistoryService.getRunHistoryByJobId(jobId, pageable));
+    }
+
+    @GetMapping("/history/{historyId}")
+    public ResponseEntity<JobRunHistoryResponse> getRunHistoryByJobIdAndHistoryId(
+            @PathVariable UUID historyId) {
+        return ResponseEntity.ok(jobRunHistoryService.getRunHistoryByHistoryId(historyId));
     }
 }

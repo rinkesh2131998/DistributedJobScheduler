@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -16,6 +17,7 @@ public class JobRunHistoryServiceImpl implements JobRunHistoryService {
     private final JobHistoryRepository jobHistoryRepository;
 
     @Override
+    @Transactional(readOnly = true) // Ensures session is open during mapping!
     public JobRunHistoryResponse getRunHistoryByHistoryId(UUID historyId) {
         JobRunHistory history = jobHistoryRepository.findById(historyId)
                 .orElseThrow(() -> new IllegalArgumentException("Job run history not found for id: " + historyId));
@@ -23,6 +25,7 @@ public class JobRunHistoryServiceImpl implements JobRunHistoryService {
     }
 
     @Override
+    @Transactional(readOnly = true) // Ensures session is open during mapping!
     public Page<JobRunHistoryResponse> getRunHistoryByJobId(UUID jobId, Pageable pageable) {
         return jobHistoryRepository.findByJobId(jobId, pageable)
                 .map(this::mapTojobRunHistoryResponse);

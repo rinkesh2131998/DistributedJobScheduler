@@ -21,6 +21,9 @@ public class HttpJobHandler implements JobHandler {
     @Override
     public void execute(Job job, JobRunHistory jobRunHistory) {
         try {
+            if ("FAIL_THIS_JOB".equals(job.getPayload())) {
+                throw new IllegalStateException("Forced failure for retry test");
+            }
             URL url = new URL(job.getPayload());
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
