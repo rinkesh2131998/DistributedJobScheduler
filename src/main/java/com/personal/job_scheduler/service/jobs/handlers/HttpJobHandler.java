@@ -1,8 +1,8 @@
 package com.personal.job_scheduler.service.jobs.handlers;
 
 import com.personal.job_scheduler.models.entity.Job;
+import com.personal.job_scheduler.models.entity.JobRunHistory;
 import com.personal.job_scheduler.models.entity.enums.JobActionType;
-import com.personal.job_scheduler.models.entity.enums.JobStatus;
 import com.personal.job_scheduler.service.jobs.JobHandler;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,7 +19,7 @@ public class HttpJobHandler implements JobHandler {
     }
 
     @Override
-    public void execute(Job job) {
+    public void execute(Job job, JobRunHistory jobRunHistory) {
         try {
             URL url = new URL(job.getPayload());
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -36,8 +36,7 @@ public class HttpJobHandler implements JobHandler {
             in.close();
             con.disconnect();
 
-            job.setJobStatus(JobStatus.SUCCESS);
-            job.setResult("HTTP " + status + ": " + content);
+            jobRunHistory.setResult("HTTP " + status + ": " + content);
         } catch (Exception e) {
             throw new RuntimeException("HTTP job failed: " + e.getMessage(), e);
         }

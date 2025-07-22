@@ -2,9 +2,9 @@ package com.personal.job_scheduler.service.executor;
 
 import com.personal.job_scheduler.exception.JobHandlerException;
 import com.personal.job_scheduler.models.entity.Job;
+import com.personal.job_scheduler.models.entity.JobRunHistory;
 import com.personal.job_scheduler.models.entity.enums.JobActionType;
 import com.personal.job_scheduler.models.entity.enums.JobStatus;
-import com.personal.job_scheduler.repository.JobRepository;
 import com.personal.job_scheduler.service.jobs.JobHandler;
 import com.personal.job_scheduler.service.jobs.JobHandlerRegistry;
 import jakarta.annotation.PreDestroy;
@@ -22,36 +22,48 @@ import java.util.concurrent.TimeUnit;
 public class JobExecutor {
 
     private final ExecutorService executorService;
-    private final JobRepository jobRepository;
+    private final JobPersistenceService jobPersistenceService;
     private final JobHandlerRegistry jobHandlerRegistry;
 
     public void submit(final Job job) {
+        final JobRunHistory jobRunHistory = new JobRunHistory();
         executorService.submit(() -> {
             try {
-                handleJobWithRetries(job, getJobhandler(job.getJobActionType()));
+                handleJobWithRetries(job, getJobhandler(job.getJobActionType()), jobRunHistory);
+                jobPersistenceService.saveJobAndRunHistoryOnTransaction(job, jobRunHistory);
             } catch (final Exception e) {
                 log.error("Unrecoverable error while executing job: {}, cause: {} ", job.getId(), e.getMessage());
-            } finally {
-                jobRepository.save(job);
+                jobPersistenceService.saveJobAndRunHistoryOnTransaction(job, jobRunHistory);
             }
         });
     }
 
-    private void handleJobWithRetries(final Job job, final JobHandler jobhandler) {
+    private void handleJobWithRetries(final Job job, final JobHandler jobhandler, JobRunHistory jobRunHistory) {
         final int maxRetries = job.getMaxRetries();
         final int retryCount = job.getRetryCount();
         if (retryCount < maxRetries) {
             try {
-                jobhandler.execute(job);
+                jobRunHistory.setJob(job);
+                jobRunHistory.setStartedAt(LocalDateTime.now());
+                jobRunHistory.setPickedAt(LocalDateTime.now());
+                jobRunHistory.setAttemptNumber(retryCount + 1);
+                jobhandler.execute(job, jobRunHistory);
+                jobRunHistory.setFinishedAt(LocalDateTime.now());
+                jobRunHistory.setStatus(JobStatus.SUCCESS);
+                job.setJobStatus(JobStatus.SUCCESS);
             } catch (final Exception exception) {
+                jobRunHistory.setFinishedAt(LocalDateTime.now());
                 if (retryCount + 1 == maxRetries) {
                     job.setJobStatus(JobStatus.FAILED);
+                    jobRunHistory.setStatus(JobStatus.FAILED);
                 } else {
                     job.setJobStatus(JobStatus.SCHEDULED);
+                    jobRunHistory.setStatus(JobStatus.SCHEDULED);
                 }
+                jobRunHistory.setErrorMessage(exception.getMessage());
+                jobRunHistory.setResult("Retrying due to error: " + exception.getMessage());
                 job.setRetryCount(retryCount + 1);
                 job.setLastRetryAt(LocalDateTime.now());
-                job.setResult("Retrying due to error: " + exception.getMessage());
                 log.error("Job: {}, failed cause: {}", job.getId(), exception.getMessage());
             }
         }
@@ -63,15 +75,6 @@ public class JobExecutor {
             throw new JobHandlerException("No JobHandler found for type: " + jobActionType);
         }
         return jobHandler;
-    }
-
-    private void handleJob(Job job) {
-        final JobActionType jobActionType = job.getJobActionType();
-        final JobHandler jobHandler = jobHandlerRegistry.getJobHandler(jobActionType);
-        if (jobHandler == null) {
-            throw new JobHandlerException("No JobHandler found for type: " + jobActionType);
-        }
-        jobHandler.execute(job);
     }
 
     @PreDestroy

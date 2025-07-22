@@ -1,8 +1,8 @@
 package com.personal.job_scheduler.service.jobs.handlers;
 
 import com.personal.job_scheduler.models.entity.Job;
+import com.personal.job_scheduler.models.entity.JobRunHistory;
 import com.personal.job_scheduler.models.entity.enums.JobActionType;
-import com.personal.job_scheduler.models.entity.enums.JobStatus;
 import com.personal.job_scheduler.service.jobs.JobHandler;
 
 public class SleepJobHandler implements JobHandler {
@@ -12,12 +12,11 @@ public class SleepJobHandler implements JobHandler {
     }
 
     @Override
-    public void execute(Job job) {
+    public void execute(Job job, JobRunHistory jobRunHistory) {
         try {
             long millis = Long.parseLong(job.getPayload());
             Thread.sleep(millis);
-            job.setResult("Slept for " + millis + " ms");
-            job.setJobStatus(JobStatus.SUCCESS);
+            jobRunHistory.setResult("Slept for " + millis + " ms");
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid sleep duration: " + job.getPayload(), e);
         } catch (InterruptedException e) {

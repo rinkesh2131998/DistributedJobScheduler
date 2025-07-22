@@ -51,8 +51,6 @@ public class Job {
     private LocalDateTime scheduledTime; // one time jobs
     @Lob
     private String payload;
-    @Lob
-    private String result;
     @CreationTimestamp
     private LocalDateTime createdAt;
     @UpdateTimestamp

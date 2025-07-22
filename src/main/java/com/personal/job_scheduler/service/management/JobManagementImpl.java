@@ -129,7 +129,6 @@ public class JobManagementImpl implements JobManagement {
                 .cronExpression(job.getCronExpression())
                 .scheduledTime(job.getScheduledTime())
                 .payload(job.getPayload())
-                .result(job.getResult())
                 .createdAt(job.getCreatedAt())
                 .updatedAt(job.getUpdatedAt())
                 .retryCount(job.getRetryCount())
