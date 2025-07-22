@@ -13,5 +13,5 @@ import java.util.UUID;
 @ValidJobRequests
 public record JobUpdateRequest(@NotNull UUID id, @NotNull String name, @NotNull JobType jobType,
                                @NotNull JobActionType jobActionType, String payload, String cronExpression,
-                               LocalDateTime scheduledTime) {
+                               LocalDateTime scheduledTime, int maxRetries, long retryDelayMillis) {
 }

@@ -11,5 +11,6 @@ import java.util.UUID;
 @Builder
 public record JobResponse(UUID id, String name, JobType jobType, JobStatus jobStatus, JobActionType jobActionType,
                           String cronExpression, LocalDateTime scheduledTime, String payload, String result,
-                          LocalDateTime createdAt, LocalDateTime updatedAt) {
+                          LocalDateTime createdAt, LocalDateTime updatedAt, int retryCount, int maxRetries,
+                          long retryDelayMillis, LocalDateTime lastRetryAt) {
 }

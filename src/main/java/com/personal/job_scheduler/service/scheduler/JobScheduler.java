@@ -22,7 +22,6 @@ public class JobScheduler {
 
     private final JobRepository jobRepository;
     private final JobExecutor jobExecutor;
-    // todo: add executor class where the jobs will be submited
 
     @Scheduled(fixedDelayString = "${job.scheduler.fixed-delay:5000}")
     @Transactional

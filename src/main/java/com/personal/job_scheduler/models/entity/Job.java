@@ -59,4 +59,12 @@ public class Job {
     private LocalDateTime updatedAt;
     @Column
     private LocalDateTime pickedAt;
+    @Column
+    private int retryCount;
+    @Column
+    private int maxRetries;
+    @Column
+    private long retryDelayMillis;
+    @Column
+    private LocalDateTime lastRetryAt;
 }

@@ -11,6 +11,6 @@ import java.time.LocalDateTime;
 @Builder
 @ValidJobRequests
 public record JobCreateRequest(@NotNull String name, @NotNull JobType jobType, @NotNull JobActionType jobActionType,
-                               String payload, String cronExpression,
+                               String payload, String cronExpression, int maxRetries, long retryDelayMillis,
                                LocalDateTime scheduledTime) {
 }

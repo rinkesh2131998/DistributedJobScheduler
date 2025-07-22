@@ -34,6 +34,8 @@ public class JobManagementImpl implements JobManagement {
                 .scheduledTime(jobCreateRequest.scheduledTime())
                 .payload(jobCreateRequest.payload())
                 .jobActionType(jobCreateRequest.jobActionType())
+                .maxRetries(jobCreateRequest.maxRetries())
+                .retryDelayMillis(jobCreateRequest.retryDelayMillis())
                 .build();
         final Job jobResponse = jobRepository.save(job);
         return toDto(jobResponse);
@@ -79,6 +81,8 @@ public class JobManagementImpl implements JobManagement {
         existingJob.setScheduledTime(jobUpdateRequest.scheduledTime());
         existingJob.setJobActionType(jobUpdateRequest.jobActionType());
         existingJob.setPayload(jobUpdateRequest.payload());
+        existingJob.setMaxRetries(jobUpdateRequest.maxRetries());
+        existingJob.setRetryDelayMillis(jobUpdateRequest.retryDelayMillis());
         final Job updatedJob = jobRepository.save(existingJob);
         return toDto(updatedJob);
     }
@@ -121,6 +125,10 @@ public class JobManagementImpl implements JobManagement {
                 .result(job.getResult())
                 .createdAt(job.getCreatedAt())
                 .updatedAt(job.getUpdatedAt())
+                .retryCount(job.getRetryCount())
+                .maxRetries(job.getMaxRetries())
+                .retryDelayMillis(job.getRetryDelayMillis())
+                .lastRetryAt(job.getLastRetryAt())
                 .build();
     }
 }
