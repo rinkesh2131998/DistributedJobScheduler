@@ -1,4 +1,4 @@
-package com.personal.job_scheduler.models;
+package com.personal.job_scheduler.models.dto;
 
 import lombok.Builder;
 

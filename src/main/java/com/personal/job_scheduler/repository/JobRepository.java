@@ -1,6 +1,7 @@
 package com.personal.job_scheduler.repository;
 
 import com.personal.job_scheduler.models.entity.Job;
+import com.personal.job_scheduler.models.entity.enums.JobStatus;
 import com.personal.job_scheduler.models.entity.enums.JobType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -30,5 +31,7 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
                         FOR UPDATE SKIP LOCKED
             """, nativeQuery = true)
     List<Job> findAndLockEligibleJobs(@Param("limit") int limit);
+
+    int countByJobStatus(JobStatus jobStatus);
 
 }
