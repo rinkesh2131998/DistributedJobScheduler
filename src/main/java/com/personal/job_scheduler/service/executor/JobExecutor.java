@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -27,18 +28,41 @@ public class JobExecutor {
     public void submit(final Job job) {
         executorService.submit(() -> {
             try {
-                //todo: simulate a job for now, not actually running the payload
-                Thread.sleep(1000);
-                handleJob(job);
-                jobRepository.save(job);
+                handleJobWithRetries(job, getJobhandler(job.getJobActionType()));
             } catch (final Exception e) {
-                job.setJobStatus(JobStatus.FAILED);
-                job.setResult("Error: " + e.getMessage());
-                log.warn("Failed to execute Job with Id: {} , cause: {}", job.getId(), e.getMessage());
+                log.error("Unrecoverable error while executing job: {}, cause: {} ", job.getId(), e.getMessage());
             } finally {
                 jobRepository.save(job);
             }
         });
+    }
+
+    private void handleJobWithRetries(final Job job, final JobHandler jobhandler) {
+        final int maxRetries = job.getMaxRetries();
+        final int retryCount = job.getRetryCount();
+        if (retryCount < maxRetries) {
+            try {
+                jobhandler.execute(job);
+            } catch (final Exception exception) {
+                if (retryCount + 1 == maxRetries) {
+                    job.setJobStatus(JobStatus.FAILED);
+                } else {
+                    job.setJobStatus(JobStatus.SCHEDULED);
+                }
+                job.setRetryCount(retryCount + 1);
+                job.setLastRetryAt(LocalDateTime.now());
+                job.setResult("Retrying due to error: " + exception.getMessage());
+                log.error("Job: {}, failed cause: {}", job.getId(), exception.getMessage());
+            }
+        }
+    }
+
+    private JobHandler getJobhandler(final JobActionType jobActionType) {
+        final JobHandler jobHandler = jobHandlerRegistry.getJobHandler(jobActionType);
+        if (jobHandler == null) {
+            throw new JobHandlerException("No JobHandler found for type: " + jobActionType);
+        }
+        return jobHandler;
     }
 
     private void handleJob(Job job) {

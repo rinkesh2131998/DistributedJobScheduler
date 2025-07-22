@@ -21,11 +21,18 @@ import java.util.UUID;
 @AllArgsConstructor
 public class JobManagementImpl implements JobManagement {
 
+    private static final int DEFAULT_MAX_RETRIES = 3;
+    private static final long DEFAULT_DELAY_RETRY_MILLIS = 1000;
+
     private final JobRepository jobRepository;
     private final JobExecutor jobExecutor;
 
     @Override
     public JobResponse createJob(final JobCreateRequest jobCreateRequest) {
+
+        final int maxRetries = jobCreateRequest.maxRetries() < 0 ? DEFAULT_MAX_RETRIES : jobCreateRequest.maxRetries();
+        final long retryDelayMillis = jobCreateRequest.retryDelayMillis() < 0 ? DEFAULT_DELAY_RETRY_MILLIS : jobCreateRequest.retryDelayMillis();
+
         final Job job = Job.builder()
                 .name(jobCreateRequest.name())
                 .type(jobCreateRequest.jobType())
@@ -34,8 +41,8 @@ public class JobManagementImpl implements JobManagement {
                 .scheduledTime(jobCreateRequest.scheduledTime())
                 .payload(jobCreateRequest.payload())
                 .jobActionType(jobCreateRequest.jobActionType())
-                .maxRetries(jobCreateRequest.maxRetries())
-                .retryDelayMillis(jobCreateRequest.retryDelayMillis())
+                .maxRetries(maxRetries)
+                .retryDelayMillis(retryDelayMillis)
                 .build();
         final Job jobResponse = jobRepository.save(job);
         return toDto(jobResponse);

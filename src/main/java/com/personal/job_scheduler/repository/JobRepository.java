@@ -21,7 +21,9 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
                           AND (
                             (type = 'ONE_TIME' AND scheduled_time <= now())
                             OR (type = 'CRON' AND cron_expression IS NOT NULL)
+                            OR last_retry_at + retry_delay_millis * interval '1 millisecond' <= now()
                           )
+                          AND retry_count <= max_retries
                           AND (picked_at IS NULL OR picked_at < now() - interval '1 minute')
                         ORDER BY created_at
                         LIMIT :limit
