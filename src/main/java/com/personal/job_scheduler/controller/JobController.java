@@ -10,6 +10,7 @@ import com.personal.job_scheduler.service.jobs.JobCrudService;
 import com.personal.job_scheduler.service.jobs.JobManagement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/jobs")
+@ConditionalOnProperty(name = "api.enabled", havingValue = "true", matchIfMissing = true)
 @RequiredArgsConstructor
 public class JobController {
     private final JobManagement jobManagement;

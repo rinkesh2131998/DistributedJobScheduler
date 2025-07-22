@@ -10,6 +10,7 @@ import com.personal.job_scheduler.service.jobs.JobHandlerRegistry;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
+@ConditionalOnProperty(name = "executor.enabled", havingValue = "true", matchIfMissing = true)
 @RequiredArgsConstructor
 public class JobExecutor {
 

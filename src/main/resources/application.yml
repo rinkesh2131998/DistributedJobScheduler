@@ -1,6 +1,13 @@
 server:
   port: 8000
 
+scheduler:
+  enabled: true
+executor:
+  enabled: true
+api:
+  enabled: true
+
 job:
   scheduler:
     fixed-delay: 5000 # 5 seconds

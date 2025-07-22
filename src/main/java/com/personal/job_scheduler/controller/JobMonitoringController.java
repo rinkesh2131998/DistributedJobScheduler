@@ -7,6 +7,7 @@ import com.personal.job_scheduler.models.entity.enums.JobActionType;
 import com.personal.job_scheduler.models.entity.enums.JobStatus;
 import com.personal.job_scheduler.service.jobs.JobMonitoringService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/metrics/jobs")
+@ConditionalOnProperty(name = "api.enabled", havingValue = "true", matchIfMissing = true)
 @RequiredArgsConstructor
 public class JobMonitoringController {
     private final JobMonitoringService jobMonitoringService;
