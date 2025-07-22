@@ -15,6 +15,9 @@ public class EchoJobHandler implements JobHandler {
 
     @Override
     public void execute(Job job, JobRunHistory jobRunHistory) {
+        if ("FAIL_THIS_JOB".equals(job.getPayload())) {
+            throw new IllegalStateException("Forced failure for retry test");
+        }
         jobRunHistory.setResult(job.getPayload());
         log.info("Executed Job with Id: {}", job.getId());
     }

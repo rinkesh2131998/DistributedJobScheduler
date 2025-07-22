@@ -48,3 +48,9 @@ databaseChangeLog:
       author: rinkesh
       sqlFile:
         path: db/changelog/sql/V7__add_retry_to_job.sql
+
+  - changeSet:
+      id: 8
+      author: rinkesh
+      sqlFile:
+        path: db/changelog/sql/V8_job_history_changes.sql
